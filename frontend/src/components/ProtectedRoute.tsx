@@ -38,10 +38,10 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
             return
         }
         const decoded = jwtDecode(token)
-        const tokenExpiration: number | undefined = decoded.exp
-        const now = Date.now() / 1000
+        const tokenExpiration = decoded.exp;
+        const now = Date.now() / 1000;
 
-        if (tokenExpiration < now) {
+        if (tokenExpiration && tokenExpiration < now) {
             await refreshToken()
         }
         else {
