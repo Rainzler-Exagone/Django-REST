@@ -1,3 +1,6 @@
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
+
 .note-container {
     padding: 10px;
     margin: 20px 0;

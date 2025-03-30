@@ -2,11 +2,17 @@ import { useState, useEffect } from "react";
 import api from "../api";
 import Note from "../components/Note";
 import "../styles/Home.css";
+import toast, { Toaster } from "react-hot-toast";
+import { Container, Grid } from '@mantine/core';
+import { AnimatePresence, motion } from "motion/react"
+import FloatingButton from "../components/AddButton";
+import NoteForm from "../components/NoteForm";
+
+
 
 function Home() {
   const [notes, setNotes] = useState([]);
-  const [content, setContent] = useState("");
-  const [title, setTitle] = useState("");
+  
 
   useEffect(() => {
     getNotes();
@@ -20,45 +26,47 @@ function Home() {
         setNotes(data);
         console.log(data);
       })
-      .catch((error) => alert(error));
+      .catch((error) => toast.error(error));
   };
 
   const deletNote = (id: number) => {
     api
       .delete(`/api/notes/delete/${id}/`)
       .then((res) => {
-        if (res.status === 204) alert("Note deleted!");
-        else alert("Error deleting note!");
+        if (res.status === 204) toast.success("Note deleted!");
+        else toast.error("Error deleting note!");
         getNotes();
       })
-      .catch((error) => alert(error));
+      .catch((error) => toast.error(error));
   };
 
 
-  const createNote  = () =>{
-      api.post("/api/notes/", {title, content}).then((res)=>{
-        if(res.status === 201) alert("Note created!");
-        else alert("Filed Creating a Note!");
-        getNotes();
-      }).catch((error: unknown) => alert(error));
-
-  }
-
+ 
   return (
     <>
-    <h1>Notes</h1>
-    {notes.map((note) => (
-        <Note note={note} onDelete={deletNote}/>
-    ))}
-    <p>Create Note</p>
-    <form onSubmit={createNote}>
-        <label htmlFor="title">Title : </label>
-        <input type="text" id="title" name="title" value={title} required onChange={(e)=>setTitle(e.target.value)}/>
-        <label htmlFor="content">Content : </label>
-        <br />
-        <textarea name="content" id="content" required value={content} onChange={(e)=>setContent(e.target.value)} ></textarea>
-        <input type="submit" value="Submit" />
-    </form>
+    <Toaster/>
+    {/* <h1>Notes</h1> */}
+    <h1 className="home-title">Notesify</h1>
+    <FloatingButton refreshNotes={getNotes}/>
+      <Container my="md">
+      <Grid>
+        {notes.map((note,index)=>(
+            <Grid.Col 
+            span={{ base: 12, xs: 4 }} 
+            key={index}
+
+                       >
+            <motion.div  initial={{ opacity: 0, y: 50 }} // Start with opacity 0 and move 50px down
+      animate={{ opacity: 1, y: 0 }} // Animate to opacity 1 and original position
+      transition={{ duration: index === 0 ? 0.1 : 2 /5, ease: "easeOut" }} // Smooth transition
+      >
+              <Note note={note} onDelete={deletNote} />
+            </motion.div>
+            </Grid.Col>
+        ))}
+      </Grid>
+    </Container>
+   
     </>
   )
 }

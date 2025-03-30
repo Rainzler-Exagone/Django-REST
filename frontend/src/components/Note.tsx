@@ -1,3 +1,4 @@
+import { Card, Text } from "@mantine/core";
 import "../styles/Note.css";
 
 interface NoteProps {
@@ -7,14 +8,23 @@ interface NoteProps {
     content: string;
     created_at: string;
   };
-  onDelete: (id: number) => void;}
+  onDelete: (id: number) => void;
+}
 
 function Note({ note, onDelete }: NoteProps) {
-    const formattedDate = new Date(note.created_at).toLocaleDateString("en-US");
+  const formattedDate = new Date(note.created_at).toLocaleDateString("en-US");
   return (
-    <div className="note-container">
+    <Card
+      withBorder
+      radius="md"
+      padding="xl"
+      bg="var(--mantine-color-body)"
+      className="note-container"
+    >
       <p className="note-title">{note.title}</p>
-      <p className="note-content">{note.content}</p>
+      <Text fz="xs" tt="uppercase" fw={700} c="dimmed">
+        {note.content}{" "}
+      </Text>
       <p className="note-date">{formattedDate}</p>
       <button
         className="delete-button"
@@ -23,9 +33,8 @@ function Note({ note, onDelete }: NoteProps) {
       >
         Delete
       </button>
-    </div>
+    </Card>
   );
 }
-
 
 export default Note;

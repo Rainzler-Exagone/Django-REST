@@ -4,6 +4,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { useState } from "react";
 import "../styles/Form.css"
 import LoadingIndicator from "./LoadingIndicator";
+import toast, { Toaster } from "react-hot-toast";
 
 
 interface FormProps {
@@ -31,19 +32,24 @@ function Form({ route, methode }: FormProps) {
             } else {
                 navigate("/login");
             }
-        } catch (error) {
-            alert(error);
+        } catch (error:unknown) {
+            toast.error(error.response.data.detail);
+            
         } finally { setLoading(false) }
     }
 
-    return <form onSubmit={handleSubmit} className="form-container">
-        <h1>{name}</h1>
+    return <>
+    <Toaster/>
+
+    <form onSubmit={handleSubmit} className="form-container">
+        <h1 className="form-title">{name}</h1>
         <input className="form-input" type="text" value={userName} onChange={(e) => setUserName(e.target.value)} placeholder="username" />
         <input className="form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="password" />
         {loading && <LoadingIndicator/>}
         <button className="form-button" type="submit" >{ name}</button>
         <Link to={`/${link}`}>{link}</Link>
     </form>
+    </>
     
 }
 
